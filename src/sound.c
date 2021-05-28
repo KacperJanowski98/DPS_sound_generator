@@ -23,15 +23,61 @@ const float tone[9][13] = {
 
 
 // Utwór do tesotwania
-Note_t notes[] = {{G,4},{E,4},{E,4}, {F,4},{D,4},{D,4}, {C,8},{E,8},{G,2}, {G,4},{E,4},{E,4}, {F,4},{D,4},{D,4}, {C,8},{E,8},{C,2},	{N,1},{N,1},{N,1}};
+// Note_t notes[] = {{G,4},{E,4},{E,4}, {F,4},{D,4},{D,4}, {C,8},{E,8},{G,2}, {G,4},{E,4},{E,4}, {F,4},{D,4},{D,4}, {C,8},{E,8},{C,2},	{N,1},{N,1},{N,1}};
 
-// Funkcja inicjująca strukturę konfiguracyjną
 void SOUND_Init(SoundCfg_t * hCfg, Note_t * notes, uint32_t length, float amplituda, float bpm, uint8_t octava){
+    hCfg->amplituda = amplituda;
+    hCfg->bpm = bpm = (60.0f/bpm) ;
+    hCfg->tone = tone;
+    hCfg->length = length;
+    hCfg->notes = notes;
+    // hCfg->n = n;
+    // hCfg->gate = gate;
+	hCfg->bpm = (60.0f / bpm);
+	hCfg->octave = octava;
+
+    // hCfg->index = 0;
+    // hCfg->sample = 0;
+
+   //hCfg->note = note;
+   notes->duration = (uint32_t)(((1.0f/(notes->duration[&hCfg->n])) * hCfg->bpm) * PDSP_FS);
+
+    // hCfg->gatePre = (uint32_t)(notes->duration * hCfg->gate);
+    // hCfg->gatePos = (uint32_t)(notes->duration - (notes->duration * hCfg->gate));
+
+	OSC_Init(&hCfg->hToneSin, OSC_Sinusoid, tone[hCfg->octave][notes->note[&hCfg->n]], 0.0f);
 
 }
 
-// Funkcja wyznaczania kolejnej próbki melodi
 int16_t SOUND_GetSample(SoundCfg_t * hCfg){
-	// Do implementacji
-	return 0;
+    float wynik;
+    float gateValue;
+
+    // if(hCfg->sample < hCfg->gatePre){
+    //     gateValue = cosf(((float)hCfg->sample / (float)hCfg->gatePre) * PDSP_2PI_DIV_FS);
+    //     gateValue *= gateValue;
+    //     gateValue = (1.0f - gateValue);
+    // } else if (hCfg->sample > hCfg->gatePos){
+    //     gateValue =cosf(((hCfg->duration - hCfg->sample) * PDSP_2PI_DIV_FS ) / (hCfg->gatePre ));
+    //     gateValue *= gateValue;
+    // } else {
+    //     gateValue = 1.0f;
+    // }
+
+	wynik = hCfg->amplituda * OSC_GetValuePeriodF(&hCfg->hToneSin);
+
+    hCfg->sample++;
+    if(hCfg->sample == hCfg->notes->duration){
+        hCfg->sample = 0;
+        hCfg->n++;
+        if(hCfg->n == hCfg->length) {
+            hCfg->n = 0;
+        }
+        hCfg->notes->duration = (uint32_t)(((1.0f / (hCfg->notes->duration[&hCfg->n]))* hCfg ->bpm *PDSP_FS));
+        // hCfg->gatePre = (uint32_t)(hCfg->duration * hCfg->gate);
+        // hCfg->gatePos = (uint32_t)(hCfg->duration - (hCfg->duration * hCfg->gate));
+
+		OSC_SetFreq(&hCfg->hToneSin, tone[hCfg->octave][hCfg->notes->note[&hCfg->n]]);
+    }
+return wynik;
 }

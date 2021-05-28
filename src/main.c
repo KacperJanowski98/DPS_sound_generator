@@ -11,8 +11,38 @@
 #include "sound.h"
 #include "stdio.h"
 
-int main() 
-{
+SoundCfg_t sound;
 
-    return 0;
+// Utwór do tesotwania
+Note_t notes[] = {{G,4},{E,4},{E,4}, {F,4},{D,4},{D,4}, {C,8},{E,8},{G,2}, {G,4},{E,4},{E,4}, {F,4},{D,4},{D,4}, {C,8},{E,8},{C,2},	{N,1},{N,1},{N,1}};
+
+int main(void) {
+
+    SOUND_Init(&sound, &notes, 18, 1000, 60, 4);
+
+	while (1) {
+		AD_On(DEBUG_MAIN_LOOP_IO);
+		if (PDSP_MODE == PDSP_MODE_POLL) {
+			DataIn = CODEC_GetSample();  	// Odczytanie nowej próbki od kodeka
+			CODEC_SetSample(DataOut);  		// Wysłanie próbki do kodeka
+			DataOut = DataIn;               // Przetwarzanie
+		} else {
+			if (DataNew == true) {
+				DataNew = false;
+				AD_On(DEBUG_PROCESSING_IO);
+				DataOut = DataIn;
+				DataOut.channel[0] = (int8_t)((1000 * SOUND_GetSample(&sound) ) / (PDSP_CODEC_Vres * 1000.0f));
+				AD_Off(DEBUG_PROCESSING_IO);
+			}
+		}
+		AD_Off(DEBUG_MAIN_LOOP_IO);
+	}
+}
+
+void CODEC_IRQHandler(void){
+	DataIn = CODEC_GetSample();   		// Odczytanie nowej próbki od kodeka
+//	DataOut = DataIn;			        // Przetwarzanie - opcjonalnie
+	CODEC_SetSample(DataOut);     		// Wysłanie próbki do kodeka
+	DataNew = true;             		// Ustawienie flagi obecności nowych danych
+	SampleNumber++;
 }
