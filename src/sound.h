@@ -2,20 +2,15 @@
  * sound.h
  *
  *  Created on: 28 maj 2021
- *      Author: kacpe
+ *      Author: Kacper Janowski
  */
 
 #ifndef INC_SOUND_H_
 #define INC_SOUND_H_
 
 #include "stdint.h"
-#include "math.h"
 
 #include "generator.h"
-
-#include "pdsp.h"
-#include "pdsp_config.h"
-
 
 typedef enum {C = 0, Cb = 1, D = 2, Db = 3, E  = 4, F = 5, Fb = 6, G = 7, Gb = 8, A = 9, Ab = 10, H = 11, N = 12} NoteName_t;
 

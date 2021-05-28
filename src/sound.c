@@ -26,7 +26,7 @@ const float tone[9][13] = {
 // Note_t notes[] = {{G,4},{E,4},{E,4}, {F,4},{D,4},{D,4}, {C,8},{E,8},{G,2}, {G,4},{E,4},{E,4}, {F,4},{D,4},{D,4}, {C,8},{E,8},{C,2},	{N,1},{N,1},{N,1}};
 
 void SOUND_Init(SoundCfg_t * hCfg, Note_t * notes, uint32_t length, float amplituda, float bpm, uint8_t octava){
-    hCfg->amplituda = amplituda;
+    hCfg->hToneSin.amplitude = amplituda;
     hCfg->bpm = bpm = (60.0f/bpm) ;
     hCfg->tone = tone;
     hCfg->length = length;
@@ -45,7 +45,7 @@ void SOUND_Init(SoundCfg_t * hCfg, Note_t * notes, uint32_t length, float amplit
     // hCfg->gatePre = (uint32_t)(notes->duration * hCfg->gate);
     // hCfg->gatePos = (uint32_t)(notes->duration - (notes->duration * hCfg->gate));
 
-	OSC_Init(&hCfg->hToneSin, OSC_Sinusoid, tone[hCfg->octave][notes->note[&hCfg->n]], 0.0f);
+	OSC_Init(&hCfg->hToneSin, OSC_Sinusoid, amplituda, tone[hCfg->octave][notes->note[&hCfg->n]], 0.0f);
 
 }
 
@@ -64,7 +64,7 @@ int16_t SOUND_GetSample(SoundCfg_t * hCfg){
     //     gateValue = 1.0f;
     // }
 
-	wynik = hCfg->amplituda * OSC_GetValuePeriodF(&hCfg->hToneSin);
+	wynik = hCfg->hToneSin.amplitude * OSC_GetValuePeriodF(&hCfg->hToneSin);
 
     hCfg->sample++;
     if(hCfg->sample == hCfg->notes->duration){

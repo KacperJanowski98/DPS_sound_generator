@@ -21,10 +21,8 @@
 #include "pdsp_config.h"
 
 // define
-#define pdsp_sinf(fi)       sinf(fi)  
-#define pdsp_asinf(fii)		asinf(fii)
+
 #define FS					8000.0f
-#define PDSP_2PI_DIV_FS     ((M_PI *2.0f)/FS)
 
 typedef enum {OSC_Sinusoid, OSC_Square, OSC_Triangle} OSC_WaveType_t;
 
@@ -64,6 +62,17 @@ typedef struct {
  * @param tp type of oscillator
  */
 void GEN_Init(GEN_Cfg_t *cfg, OSC_WaveType_t type, float A, float f, float phaseOffset, float duty);
+
+/**
+ * @brief 
+ * 
+ * @param cfg 
+ * @param type 
+ * @param A 
+ * @param f 
+ * @param phaseOffset 
+ */
+void OSC_Init (OSC_Cfg_t *cfg, OSC_WaveType_t type, float A, float f, float phaseOffset);
 
 /**
  * @brief Generator executing function

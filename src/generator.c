@@ -58,13 +58,13 @@ uint8_t GEN_GetValue(GEN_Cfg_t *cfg){
 }
 
 
-void OSC_Init (OSC_Cfg_t *cfg, OSC_WaveType_t type, float f, float phaseOffset) {
+void OSC_Init (OSC_Cfg_t *cfg, OSC_WaveType_t type, float A, float f, float phaseOffset) {
+	cfg->amplitude = (float) fmod(A, (PDSP_CODEC_Vpp * 500.0f));
     cfg->type = type;
     cfg->frequency = f;
     cfg->phase = (float) fmod(phaseOffset, PDSP_2PI);
     cfg->phaseStep = (f * PDSP_2PI_DIV_FS);
 }
-
 void OSC_SetFreq(OSC_Cfg_t *cfg, float freq) {
     cfg->frequency = freq;
     cfg->phaseStep = (freq * PDSP_2PI_DIV_FS);
