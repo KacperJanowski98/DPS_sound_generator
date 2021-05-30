@@ -23,10 +23,6 @@ void GEN_Init(GEN_Cfg_t *cfg, OSC_WaveType_t type, float A, float f, float phase
 
 uint8_t GEN_GetValue(GEN_Cfg_t *cfg){
 	float y;    //phase
-	float sample_fill;
-	float left;
-	float right;
-
     float yDuty;    //phaseDusty
     float wave;
     float alpha;
@@ -65,12 +61,15 @@ void OSC_Init (OSC_Cfg_t *cfg, OSC_WaveType_t type, float A, float f, float phas
     cfg->phase = (float) fmod(phaseOffset, PDSP_2PI);
     cfg->phaseStep = (f * PDSP_2PI_DIV_FS);
 }
+
 void OSC_SetFreq(OSC_Cfg_t *cfg, float freq) {
     cfg->frequency = freq;
     cfg->phaseStep = (freq * PDSP_2PI_DIV_FS);
 }
 
 float OSC_GetValueF(OSC_Cfg_t *cfg) {
+//uint16_t OSC_GetValueF(OSC_Cfg_t *cfg) {
+
     float wave;
     float phase;
 
@@ -101,6 +100,7 @@ float OSC_GetValueF(OSC_Cfg_t *cfg) {
 }
 
 float OSC_GetValuePeriodF(OSC_Cfg_t *cfg) {
+//uint16_t OSC_GetValuePeriodF(OSC_Cfg_t *cfg) {
     float wave;
 
     wave = OSC_GetValueF(cfg);

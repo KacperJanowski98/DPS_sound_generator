@@ -23,61 +23,61 @@ const float tone[9][13] = {
 
 
 // Utwór do tesotwania
-// Note_t notes[] = {{G,4},{E,4},{E,4}, {F,4},{D,4},{D,4}, {C,8},{E,8},{G,2}, {G,4},{E,4},{E,4}, {F,4},{D,4},{D,4}, {C,8},{E,8},{C,2},	{N,1},{N,1},{N,1}};
+//Note_t notes[] = {{G,4},{E,4},{E,4}, {F,4},{D,4},{D,4}, {C,8},{E,8},{G,2}, {G,4},{E,4},{E,4}, {F,4},{D,4},{D,4}, {C,8},{E,8},{C,2},	{N,1},{N,1},{N,1}};
+
 
 void SOUND_Init(SoundCfg_t * hCfg, Note_t * notes, uint32_t length, float amplituda, float bpm, uint8_t octava){
-    hCfg->hToneSin.amplitude = amplituda;
+    hCfg->amplituda = amplituda;
+	hCfg->notes = notes;
     hCfg->bpm = bpm = (60.0f/bpm) ;
-    hCfg->tone = tone;
     hCfg->length = length;
-    hCfg->notes = notes;
-    // hCfg->n = n;
-    // hCfg->gate = gate;
+//    hCfg->gate = 0.1;
 	hCfg->bpm = (60.0f / bpm);
 	hCfg->octave = octava;
+	hCfg->n = 0;
+    hCfg->sample = 0;
+    hCfg->tone = (float*)notes->duration;
 
-    // hCfg->index = 0;
-    // hCfg->sample = 0;
+    hCfg->notes[hCfg->n].duration = (uint32_t)(((1.0f/(hCfg->notes[hCfg->n].duration)) * hCfg->bpm) * PDSP_CODEC_Fs);
 
-   //hCfg->note = note;
-   notes->duration = (uint32_t)(((1.0f/(notes->duration[&hCfg->n])) * hCfg->bpm) * PDSP_FS);
+//     hCfg->gatePre = (uint32_t)(hCfg->notes[hCfg->n].duration * hCfg->gate);
+//     hCfg->gatePos = (uint32_t)(hCfg->notes[hCfg->n].duration - (hCfg->notes[hCfg->n].duration * hCfg->gate));
 
-    // hCfg->gatePre = (uint32_t)(notes->duration * hCfg->gate);
-    // hCfg->gatePos = (uint32_t)(notes->duration - (notes->duration * hCfg->gate));
-
-	OSC_Init(&hCfg->hToneSin, OSC_Sinusoid, amplituda, tone[hCfg->octave][notes->note[&hCfg->n]], 0.0f);
+	OSC_Init(&hCfg->hToneSin, OSC_Sinusoid, hCfg->amplituda, tone[hCfg->octave][hCfg->notes[hCfg->n].note], 0.0f);
 
 }
 
 int16_t SOUND_GetSample(SoundCfg_t * hCfg){
     float wynik;
-    float gateValue;
+//    float gateValue;
+//
+//     if(hCfg->sample < hCfg->gatePre){
+//         gateValue = cosf(((float)hCfg->sample / (float)hCfg->gatePre) * PDSP_2PI_DIV_FS);
+//         gateValue *= gateValue;
+//         gateValue = (1.0f - gateValue);
+//     } else if (hCfg->sample > hCfg->gatePos){
+//         gateValue =cosf(((hCfg->notes[hCfg->n].duration - hCfg->sample) * PDSP_2PI_DIV_FS ) / (hCfg->gatePre ));
+//         gateValue *= gateValue;
+//     } else {
+//         gateValue = 1.0f;
+//     }
 
-    // if(hCfg->sample < hCfg->gatePre){
-    //     gateValue = cosf(((float)hCfg->sample / (float)hCfg->gatePre) * PDSP_2PI_DIV_FS);
-    //     gateValue *= gateValue;
-    //     gateValue = (1.0f - gateValue);
-    // } else if (hCfg->sample > hCfg->gatePos){
-    //     gateValue =cosf(((hCfg->duration - hCfg->sample) * PDSP_2PI_DIV_FS ) / (hCfg->gatePre ));
-    //     gateValue *= gateValue;
-    // } else {
-    //     gateValue = 1.0f;
-    // }
-
-	wynik = hCfg->hToneSin.amplitude * OSC_GetValuePeriodF(&hCfg->hToneSin);
+	wynik = ((hCfg->amplituda) * OSC_GetValuePeriodF(&hCfg->hToneSin));
 
     hCfg->sample++;
-    if(hCfg->sample == hCfg->notes->duration){
+    if(hCfg->sample == hCfg->notes[hCfg->n].duration){
         hCfg->sample = 0;
         hCfg->n++;
         if(hCfg->n == hCfg->length) {
             hCfg->n = 0;
         }
-        hCfg->notes->duration = (uint32_t)(((1.0f / (hCfg->notes->duration[&hCfg->n]))* hCfg ->bpm *PDSP_FS));
-        // hCfg->gatePre = (uint32_t)(hCfg->duration * hCfg->gate);
-        // hCfg->gatePos = (uint32_t)(hCfg->duration - (hCfg->duration * hCfg->gate));
+//        hCfg->notes->duration = (uint32_t)(((1.0f / (hCfg->notes->duration[&hCfg->n]))* hCfg->bpm) * PDSP_FS);
+        hCfg->notes[hCfg->n].duration = (uint32_t)(((1.0f/(hCfg->notes[hCfg->n].duration)) * hCfg->bpm) * PDSP_CODEC_Fs);
 
-		OSC_SetFreq(&hCfg->hToneSin, tone[hCfg->octave][hCfg->notes->note[&hCfg->n]]);
+//        hCfg->gatePre = (uint32_t)(hCfg->notes[hCfg->n].duration * hCfg->gate);
+//        hCfg->gatePos = (uint32_t)(hCfg->notes[hCfg->n].duration - (hCfg->notes[hCfg->n].duration * hCfg->gate));
+
+		OSC_SetFreq(&hCfg->hToneSin, tone[hCfg->octave][hCfg->notes[hCfg->n].note]);
     }
-return wynik;
+    return (int16_t)wynik;
 }

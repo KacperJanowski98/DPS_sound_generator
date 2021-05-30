@@ -20,10 +20,6 @@
 #include "pdsp.h"
 #include "pdsp_config.h"
 
-// define
-
-#define FS					8000.0f
-
 typedef enum {OSC_Sinusoid, OSC_Square, OSC_Triangle} OSC_WaveType_t;
 
 /**
@@ -53,9 +49,9 @@ typedef struct {
 }OSC_Cfg_t;
 
 /**
- * @brief Oscillator initialization method
+ * @brief Generator initialization method
  * 
- * @param cfg Oscillator structire
+ * @param cfg Oscillator structure
  * @param A Aamplitude
  * @param f Frequency
  * @param sfill Fill signal
@@ -64,13 +60,13 @@ typedef struct {
 void GEN_Init(GEN_Cfg_t *cfg, OSC_WaveType_t type, float A, float f, float phaseOffset, float duty);
 
 /**
- * @brief 
- * 
- * @param cfg 
- * @param type 
- * @param A 
- * @param f 
- * @param phaseOffset 
+ * @brief Oscillator initialization method
+ *
+ * @param cfg Oscillator structure
+ * @param type Type of oscillator
+ * @param A Amplitude
+ * @param f Frequency
+ * @param phaseOffset
  */
 void OSC_Init (OSC_Cfg_t *cfg, OSC_WaveType_t type, float A, float f, float phaseOffset);
 
@@ -86,31 +82,32 @@ uint8_t GEN_GetValue(GEN_Cfg_t *cfg);
  * @brief Oscilator executing function (mniejsza liczba mnozen dzieki obliczeniu kroku fazy)
  * 
  * @param cfg Generator structure
- * @return float 
+ * @return float Returns the value of the specified type of oscillator
  */
 float OSC_GetValueF(OSC_Cfg_t *cfg);
+//uint16_t OSC_GetValueF(OSC_Cfg_t *cfg);
 
 /**
- * @brief 
+ * @brief Oscilator executing function (float)
  * 
- * @param cfg 
- * @return float 
+ * @param cfg Oscillator structure
+ * @return float Returns the frequency period value
  */
 float OSC_GetValuePeriodF(OSC_Cfg_t *cfg);
 
 /**
- * @brief 
+ * @brief Getting the value of the sine period
  * 
- * @param cfg 
- * @return float 
+ * @param cfg Oscillator structure
+ * @return float Returns the frequency period value for a sine wave
  */
 float OSC_GetSinPeriodF(OSC_Cfg_t *cfg);
 
 /**
- * @brief 
+ * @brief Frequency setting
  * 
- * @param cfg 
- * @param freq 
+ * @param cfg Oscillator structure
+ * @param freq Frequency
  */
 void OSC_SetFreq(OSC_Cfg_t *cfg, float freq);
 
